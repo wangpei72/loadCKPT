@@ -157,7 +157,7 @@ if __name__ == '__main__':
         print("test id: %d total accuracy is %f" % (i+1, accuracy))
     time_str = time.strftime("%Y%m%d%H%M%S", time.localtime())
     array_to_save = np.array(test_accu, dtype=object)
-    np.save('./res/test_accu' + time_str + '.npy', array_to_save)
+    np.save('./test_accu' + time_str + '.npy', array_to_save)
 
     # label1 = model_argmax(sess, x, preds, np.array([sample1]))
     # label2 = model_argmax(sess, x, preds, np.array([sample2]))
