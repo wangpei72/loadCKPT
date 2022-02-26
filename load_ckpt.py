@@ -129,65 +129,68 @@ if __name__ == '__main__':
     # 每次实验有20组，根据数据集大小梯度上升，将产生20组x_input,y_predict, y_label的数据，根据每次
     # 产生的x_input y_predict可计算出di和spd(base on attr : 'sex')两个公平性指标，每次实验将产生20组
     # di和spd数据
-    id_list = ['01', '02', '03', '04', '05']
-    test_instances_array = np.load('data/test_instances_set' + id_list[0] + '.npy', allow_pickle=True)
-    test_res_right_or_wrong_set = []  # 该list中的 0 1表示这次推理是错误或者正确的
-    test_accu = []
-    y_predict_20 = []  # 20组 y_predict shape[0]应该30
-    spd_20 = []
-    di_20 = []
-    for i in range(2):
-        accuracy = 0.
-        cor_cnt = 0
-        wro_cnt = 0
-        ground_truth_tmp = 0
-        di = 0.
-        spd = 0.
-        sample_id = 1
-        y_pre = []
-        X_sample = []
-        for idx in test_instances_array[i]:
-            test_res_tmp = []
-            sample_tmp = np.load('./data/data-x.npy')[idx]
-            label_tmp = model_argmax(sess, x, preds, np.array([sample_tmp]))
-            X_sample.append(sample_tmp)  # 保存当前的instance
-            y_pre.append(label_tmp)  # 保存当前推理获得的y值 0 :<50k 1: >50k
-            ground_truth_tmp_array = np.load('./data/data-y.npy')[idx]
-            if ground_truth_tmp_array[0] > 0:
-                ground_truth_tmp = 0
-            else:
-                ground_truth_tmp = 1
-            if label_tmp == ground_truth_tmp:
-                test_res_tmp.append(1)
-                cor_cnt += 1
-                print("sample id: %d correct prediction, record 1 for this sample" % sample_id)
-            else:
-                test_res_tmp.append(0)
-                wro_cnt += 1
-                print("sample id: %d wrong prediction, record 0 for this sample" % sample_id)
-            sample_id += 1
-        X_arr = np.array(X_sample, dtype=np.float32)
-        y_arr = np.array(y_pre, dtype=np.float32)
-        spd = statistical_parity_difference.S_P_D(X_arr, y_arr)
-        di = disparte_impact.D_I(X_arr, y_arr)
+    id_list = ['02', '03', '04', '05']
+    id_list_cnt = 0
+    while id_list_cnt < 4:
+        test_instances_array = np.load('data/test_instances_set' + id_list[id_list_cnt] + '.npy', allow_pickle=True)
+        test_res_right_or_wrong_set = []  # 该list中的 0 1表示这次推理是错误或者正确的
+        test_accu = []
+        y_predict_20 = []  # 20组 y_predict shape[0]应该30
+        spd_20 = []
+        di_20 = []
+        for i in range(20):
+            print('starting round %d' % i)
+            accuracy = 0.
+            cor_cnt = 0
+            wro_cnt = 0
+            ground_truth_tmp = 0
+            di = 0.
+            spd = 0.
+            sample_id = 1
+            y_pre = []
+            X_sample = []
+            for idx in test_instances_array[i]:
+                test_res_tmp = []
+                sample_tmp = np.load('./data/data-x.npy')[idx]
+                label_tmp = model_argmax(sess, x, preds, np.array([sample_tmp]))
+                X_sample.append(sample_tmp)  # 保存当前的instance
+                y_pre.append(label_tmp)  # 保存当前推理获得的y值 0 :<50k 1: >50k
+                ground_truth_tmp_array = np.load('./data/data-y.npy')[idx]
+                if ground_truth_tmp_array[0] > 0:
+                    ground_truth_tmp = 0
+                else:
+                    ground_truth_tmp = 1
+                if label_tmp == ground_truth_tmp:
+                    test_res_tmp.append(1)
+                    cor_cnt += 1
+                    print("sample id: %d correct prediction, record 1 for this sample" % sample_id)
+                else:
+                    test_res_tmp.append(0)
+                    wro_cnt += 1
+                    print("sample id: %d wrong prediction, record 0 for this sample" % sample_id)
+                sample_id += 1
+            X_arr = np.array(X_sample, dtype=np.float32)
+            y_arr = np.array(y_pre, dtype=np.float32)
+            spd = statistical_parity_difference.S_P_D(X_arr, y_arr)
+            di = disparte_impact.D_I(X_arr, y_arr)
 
-        y_predict_20.append(y_pre)
-        spd_20.append(spd)
-        di_20.append(di)
-        test_res_right_or_wrong_set.append(test_res_tmp)
-        accuracy = cor_cnt / (cor_cnt + wro_cnt)
-        test_accu.append(accuracy)
-        print("test id: %d total accuracy is %f" % (i+1, accuracy))
-    accuracy_array = np.array(test_accu, dtype=object)
-    predict_res_array = np.array(y_predict_20, dtype=object)
-    spd_res_array = np.array(spd_20, dtype=np.float32)
-    di_res_array = np.array(di_20, dtype=np.float32)
+            y_predict_20.append(y_pre)
+            spd_20.append(spd)
+            di_20.append(di)
+            test_res_right_or_wrong_set.append(test_res_tmp)
+            accuracy = cor_cnt / (cor_cnt + wro_cnt)
+            test_accu.append(accuracy)
+            print("test id: %d total accuracy is %f" % (i + 1, accuracy))
+        accuracy_array = np.array(test_accu, dtype=object)
+        predict_res_array = np.array(y_predict_20, dtype=object)
+        spd_res_array = np.array(spd_20, dtype=np.float32)
+        di_res_array = np.array(di_20, dtype=np.float32)
 
-    np.save('./test_accuracy' + id_list[0] + '.npy', accuracy_array)
-    np.save('./testres/y_predict' + id_list[0] + '.npy', predict_res_array)
-    np.save('./testres/spd_res' + id_list[0] + '.npy', spd_res_array)
-    np.save('./testres/di_res' + id_list[0] + '.npy', di_res_array)
-
-    # label1 = model_argmax(sess, x, preds, np.array([sample1]))
-    # label2 = model_argmax(sess, x, preds, np.array([sample2]))
+        np.save('./test_accuracy' + id_list[id_list_cnt] + '.npy', accuracy_array)
+        np.save('./testres/y_predict' + id_list[id_list_cnt] + '.npy', predict_res_array)
+        np.save('./testres/spd_res' + id_list[id_list_cnt] + '.npy', spd_res_array)
+        np.save('./testres/di_res' + id_list[id_list_cnt] + '.npy', di_res_array)
+        id_list_cnt += 1
+        # label1 = model_argmax(sess, x, preds, np.array([sample1]))
+        # label2 = model_argmax(sess, x, preds, np.array([sample2]))
 
