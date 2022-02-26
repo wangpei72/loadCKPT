@@ -19,10 +19,26 @@ if __name__ == '__main__':
     avg_spd_20 = []
     avg_accuracy_20 = []
 
-    while id_list_cnt < 1:
-        id_list_cnt += 1
+    idx = 0
+    avg_di = np.zeros(20, dtype=np.float32)
+    avg_spd = np.zeros(20, dtype=np.float32)
+    avg_acc = np.zeros(20, dtype=object)
+    while id_list_cnt < 5:
         tmp_di = np.load('./testres/di_res' + id_list[id_list_cnt] + '.npy', allow_pickle=True)
         tmp_spd = np.load('./testres/spd_res' + id_list[id_list_cnt] + '.npy')
-        tmp_acc = np.logical_and('./test_accuracy' + id_list[id_list_cnt] + '.npy')
-        for item in tmp_di:
-            print(tmp_di.index(item))
+        # tmp_acc = np.load('./test_accuracy' + id_list[id_list_cnt] + '.npy', allow_pickle=True)
+
+        avg_di += tmp_di
+        avg_spd += tmp_spd
+        # avg_acc += tmp_acc
+        if id_list_cnt == 4:
+            avg_di /= 5.
+            avg_spd /= 5.
+            # avg_acc /= 5.
+        id_list_cnt += 1
+        np.save('res_avg/di_avg.npy', avg_di)
+        np.save('res_avg/spd_avg.npy', avg_spd)
+
+    print('avg calculating done. ')
+
+
