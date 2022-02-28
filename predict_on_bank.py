@@ -128,7 +128,7 @@ if __name__ == '__main__':
     # di和spd数据
     id_list = ['01', '02', '03', '04', '05']
     id_list_cnt = 0
-    while id_list_cnt < 1:
+    while id_list_cnt < 5:
         test_instances_array = np.load('test_instance_set/bank_test_instances_set' + id_list[id_list_cnt] + '.npy', allow_pickle=True)
         test_res_right_or_wrong_set = []  # 该list中的 0 1表示这次推理是错误或者正确的
         test_accu = []
