@@ -3,6 +3,12 @@ import numpy as np
 
 default_map = ['Age', 'workclass', 'fnlwgt', 'education', 'education-num', 'marital-status',
                'occupation', 'race', 'sex', 'capital-gain', 'capital-loss', 'hours-per-week', 'native-country']
+bank_map = ['age', 'job', 'marital', 'education', 'education-num', 'marital-status',
+               'occupation', 'race', 'sex', 'capital-gain', 'capital-loss', 'hours-per-week', 'native-country', 'xx', 'xxx',
+            'xxxx', 'xxxxx', 'yy', 'yyyy', 'yyyyy']
+# bank 后面几个属性暂时凑数的，后期要改
+# TODO
+
 def compute_boolean_conditioning_vector(X, feature_names=None, condition=None):
     """
     condition (list(dict))
