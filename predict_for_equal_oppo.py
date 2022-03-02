@@ -101,8 +101,8 @@ def model_argmax(sess, x, predictions, samples, feed=None):
     else:
         return np.argmax(probabilities, axis=1)
 
-sample1 = np.load('./bank-additional/data/data-bank-additional-X1.npy')[1]
-sample2 = np.load('./bank-additional/data/data-bank-additional-X1.npy')[18]
+# sample1 = np.load('./bank-additional/data/data-bank-additional-X1.npy')[1]
+# sample2 = np.load('./bank-additional/data/data-bank-additional-X1.npy')[18]
 # prepare the testing  model
 input_shape = (None, 20)
 nb_classes = 2
@@ -133,7 +133,7 @@ if __name__ == '__main__':
         test_res_right_or_wrong_set = []  # 该list中的 0 1表示这次推理是错误或者正确的
         test_accu = []
         y_ture = []
-        y_predict_20 = []  # 20组 y_predict shape[0]应该30
+        y_predict_20 = []  # 20组 y_predict shape[0]应该20
         eoop_20 = []
         eood_20 = []
         for i in range(20):
