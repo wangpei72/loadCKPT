@@ -184,10 +184,10 @@ if __name__ == '__main__':
         spd_res_array = np.array(spd_20, dtype=np.float32)
         di_res_array = np.array(di_20, dtype=np.float32)
 
-        np.save('./bank-testres/test_accuracy' + id_list[id_list_cnt] + '.npy', accuracy_array)
-        np.save('./bank-testres/y_predict' + id_list[id_list_cnt] + '.npy', predict_res_array)
-        np.save('./bank-testres/spd_res' + id_list[id_list_cnt] + '.npy', spd_res_array)
-        np.save('./bank-testres/di_res' + id_list[id_list_cnt] + '.npy', di_res_array)
+        np.save('./bank-adult-testres/test_accuracy' + id_list[id_list_cnt] + '.npy', accuracy_array)
+        np.save('./bank-adult-testres/y_predict' + id_list[id_list_cnt] + '.npy', predict_res_array)
+        np.save('./bank-adult-testres/spd_res' + id_list[id_list_cnt] + '.npy', spd_res_array)
+        np.save('./bank-adult-testres/di_res' + id_list[id_list_cnt] + '.npy', di_res_array)
         id_list_cnt += 1
     # label1 = model_argmax(sess, x, preds, np.array([sample1]))
     # label2 = model_argmax(sess, x, preds, np.array([sample2]))

@@ -189,9 +189,9 @@ if __name__ == '__main__':
         eoop_res_array = np.array(eoop_20, dtype=np.float32)
         eood_res_array = np.array(eood_20, dtype=np.float32)
 
-        # np.save('./bank-testres/test_accuracy' + id_list[id_list_cnt] + '.npy', accuracy_array)
-        # np.save('./bank-testres/y_predict' + id_list[id_list_cnt] + '.npy', predict_res_array)
-        np.save('./bank-testres/eoop_res' + id_list[id_list_cnt] + '.npy', eoop_res_array)
-        np.save('./bank-testres/eood_res' + id_list[id_list_cnt] + '.npy', eood_res_array)
+        # np.save('./bank-adult-testres/test_accuracy' + id_list[id_list_cnt] + '.npy', accuracy_array)
+        # np.save('./bank-adult-testres/y_predict' + id_list[id_list_cnt] + '.npy', predict_res_array)
+        np.save('./bank-adult-testres/eoop_res' + id_list[id_list_cnt] + '.npy', eoop_res_array)
+        np.save('./bank-adult-testres/eood_res' + id_list[id_list_cnt] + '.npy', eood_res_array)
         id_list_cnt += 1
 

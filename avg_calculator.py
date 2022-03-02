@@ -22,11 +22,11 @@ if __name__ == '__main__':
     avg_spd = np.zeros(20, dtype=np.float32)
     avg_acc = np.zeros(20, dtype=object)
     while id_list_cnt < 5:
-        # tmp_di = np.load('./bank-testres/di_res' + id_list[id_list_cnt] + '.npy', allow_pickle=True)
-        # tmp_spd = np.load('./bank-testres/spd_res' + id_list[id_list_cnt] + '.npy')
-        tmp_di = np.load('./bank-testres/eoop_res' + id_list[id_list_cnt] + '.npy', allow_pickle=True)
-        tmp_spd = np.load('./bank-testres/eood_res' + id_list[id_list_cnt] + '.npy')
-        tmp_acc = np.load('./bank-testres/test_accuracy' + id_list[id_list_cnt] + '.npy', allow_pickle=True)
+        # tmp_di = np.load('./bank-adult-testres/di_res' + id_list[id_list_cnt] + '.npy', allow_pickle=True)
+        # tmp_spd = np.load('./bank-adult-testres/spd_res' + id_list[id_list_cnt] + '.npy')
+        tmp_di = np.load('./bank-adult-testres/eoop_res' + id_list[id_list_cnt] + '.npy', allow_pickle=True)
+        tmp_spd = np.load('./bank-adult-testres/eood_res' + id_list[id_list_cnt] + '.npy')
+        tmp_acc = np.load('./bank-adult-testres/test_accuracy' + id_list[id_list_cnt] + '.npy', allow_pickle=True)
 
         avg_di += tmp_di
         avg_spd += tmp_spd
@@ -53,8 +53,8 @@ if __name__ == '__main__':
 #     avg_spd = np.zeros(20, dtype=np.float32)
 #     avg_acc = np.zeros(20, dtype=object)
 #     while id_list_cnt < 5:
-#         tmp_di = np.load('./bank-testres/di_res' + id_list[id_list_cnt] + '.npy', allow_pickle=True)
-#         tmp_spd = np.load('./bank-testres/spd_res' + id_list[id_list_cnt] + '.npy')
+#         tmp_di = np.load('./bank-adult-testres/di_res' + id_list[id_list_cnt] + '.npy', allow_pickle=True)
+#         tmp_spd = np.load('./bank-adult-testres/spd_res' + id_list[id_list_cnt] + '.npy')
 #         # tmp_acc = np.load('./test_accuracy' + id_list[id_list_cnt] + '.npy', allow_pickle=True)
 #
 #         avg_di += tmp_di
@@ -65,8 +65,8 @@ if __name__ == '__main__':
 #             avg_spd /= 5.
 #             # avg_acc /= 5.
 #         id_list_cnt += 1
-#         np.save('bank-testres/res_avg/di_avg.npy', avg_di)
-#         np.save('bank-testres/res_avg/spd_avg.npy', avg_spd)
+#         np.save('bank-adult-testres/res_avg/di_avg.npy', avg_di)
+#         np.save('bank-adult-testres/res_avg/spd_avg.npy', avg_spd)
 #
 #     print('avg calculating done. ')
 

@@ -15,6 +15,42 @@ return difference(recall_score, y_true, y_pred, prot_attr=prot_attr,
                       priv_group=priv_group, pos_label=pos_label,
                       sample_weight=sample_weight)
 """
+def E_Oppo(X, y_true, y_pre, feature_names=None):
+    if feature_names is None:
+        feature_names = default_map
+    # 越接近0越公平
+    unprivileged_boolean_condition_vector = compute_boolean_conditioning_vector(X, feature_names=feature_names, condition=[{'sex': 0}])
+    privileged_boolean_condition_vector = compute_boolean_conditioning_vector(X, feature_names=feature_names, condition=[{'sex': 1}])
+    unpri_instances_num = np.sum(unprivileged_boolean_condition_vector != 0, dtype=np.float32)
+    pri_instances_num = np.sum(privileged_boolean_condition_vector != 0, dtype=np.float32)
+
+    w = np.ones(y_pre.shape)
+    unpri_dict = compute_num_TF_PN(X, y_true, y_pre, w, bank_map, 1., 0., condition=[{'sex': 0}])
+    pri_dict = compute_num_TF_PN(X, y_true, y_pre, w, bank_map, 1., 0., condition=[{'sex': 1}])
+
+    TPR_diff = unpri_dict['TP'] / unpri_instances_num - pri_dict['TP'] / pri_instances_num
+    FPR_diff = unpri_dict['FP'] / unpri_instances_num - pri_dict['FP'] / pri_instances_num
+
+    return TPR_diff
+
+
+def E_Odds(X, y_true, y_pre, feature_names=None):
+    if feature_names is None:
+        feature_names = default_map
+    # 越接近0越公平
+    unprivileged_boolean_condition_vector = compute_boolean_conditioning_vector(X, feature_names=feature_names, condition=[{'sex': 0}])
+    privileged_boolean_condition_vector = compute_boolean_conditioning_vector(X, feature_names=feature_names, condition=[{'sex': 1}])
+    unpri_instances_num = np.sum(unprivileged_boolean_condition_vector != 0, dtype=np.float32)
+    pri_instances_num = np.sum(privileged_boolean_condition_vector != 0, dtype=np.float32)
+
+    w = np.ones(y_pre.shape)
+    unpri_dict = compute_num_TF_PN(X, y_true, y_pre, w, bank_map, 1., 0., condition=[{'sex': 0}])
+    pri_dict = compute_num_TF_PN(X, y_true, y_pre, w, bank_map, 1., 0., condition=[{'sex': 1}])
+
+    TPR_diff = unpri_dict['TP'] / unpri_instances_num - pri_dict['TP'] / pri_instances_num
+    FPR_diff = unpri_dict['FP'] / unpri_instances_num - pri_dict['FP'] / pri_instances_num
+
+    return (TPR_diff + FPR_diff) / 2
 
 
 def E_Oppo_bank(X, y_true, y_pre, feature_names=None):
