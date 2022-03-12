@@ -5,7 +5,7 @@ import time
 from load_model.network import *
 from load_model.layer import *
 sys.path.append("../")
-from group_fairness_metric import equality_of_oppo
+from group_fairness_metric import equality_of_oppo, statistical_parity_difference, disparte_impact
 
 
 
@@ -134,6 +134,9 @@ if __name__ == '__main__':
         test_accu = []
         y_ture = []
         y_predict_20 = []  # 20组 y_predict shape[0]应该20
+
+        di_20 = []
+        spd_20 = []
         eoop_20 = []
         eood_20 = []
         for i in range(20):
@@ -174,6 +177,8 @@ if __name__ == '__main__':
             y_arr = np.array(y_pre, dtype=np.float32)
             y_ture_arr = np.array(y_ture, dtype=np.float32)
 
+            spd = statistical_parity_difference.S_P_D_bank(X_arr, y_arr)
+            di = disparte_impact.D_I_bank(X_arr, y_arr)
             eoop = equality_of_oppo.E_Oppo_bank(X_arr, y_ture_arr, y_arr)
             eood = equality_of_oppo.E_Odds_bank(X_arr, y_ture_arr, y_arr)
 

@@ -1,7 +1,7 @@
 import numpy as np
 
 
-default_map = ['Age', 'workclass', 'fnlwgt', 'education', 'education-num', 'marital-status',
+default_map = ['age', 'workclass', 'fnlwgt', 'education', 'education-num', 'marital-status',
                'occupation', 'race', 'sex', 'capital-gain', 'capital-loss', 'hours-per-week', 'native-country']
 bank_map = ['age', 'job', 'marital', 'education', 'education-num', 'marital-status',
                'occupation', 'race', 'sex', 'capital-gain', 'capital-loss', 'hours-per-week', 'native-country', 'xx', 'xxx',

@@ -4,10 +4,10 @@ import numpy as np
 import time
 from load_model.network import *
 from load_model.layer import *
+
 sys.path.append("../")
 from group_fairness_metric import statistical_parity_difference, equality_of_oppo
 from group_fairness_metric import disparte_impact
-
 
 
 def dnn(input_shape=(None, 13), nb_classes=2):
@@ -34,6 +34,7 @@ def dnn(input_shape=(None, 13), nb_classes=2):
     model = MLP(layers, input_shape)
     return model
 
+
 def gradient_graph(x, preds, y=None):
     """
     Construct the TF graph of gradient
@@ -55,6 +56,7 @@ def gradient_graph(x, preds, y=None):
     grad, = tf.gradients(loss, x)
 
     return grad
+
 
 def model_loss(y, model, mean=True):
     """
@@ -79,6 +81,7 @@ def model_loss(y, model, mean=True):
         out = tf.reduce_mean(out)
     return out
 
+
 def model_argmax(sess, x, predictions, samples, feed=None):
     """
     Helper function that computes the current class prediction
@@ -102,11 +105,6 @@ def model_argmax(sess, x, predictions, samples, feed=None):
         return np.argmax(probabilities, axis=1)
 
 
-# prepare the testing data
-# sample=[3,0,14,10,0,4,0,0,0,0,0,40,0]
-# sample1 = np.load('./data/data-x.npy')[1]
-# sample2 = np.load('./data/data-x.npy')[10]
-# prepare the testing  model
 input_shape = (None, 13)
 nb_classes = 2
 tf.set_random_seed(1234)
@@ -125,10 +123,8 @@ saver.restore(sess, model_path)
 grad_0 = gradient_graph(x, preds)
 # predict
 if __name__ == '__main__':
-    # 本脚本用以读取test_instances_set*.npy 获得测试集input并且进行model的推理获得y_predict
-    # 每次实验有20组，根据数据集大小梯度上升，将产生20组x_input,y_predict, y_label的数据，根据每次
-    # 产生的x_input y_predict可计算出di和eoop(base on attr : 'sex')两个公平性指标，每次实验将产生20组
-    # di和eoop数据
+    x_origin = np.load('./data/data-x.npy')
+    y_origin = np.load('./data/data-y.npy')
     id_list = ['01', '02', '03', '04', '05']
     id_list_cnt = 0
     while id_list_cnt < 5:
@@ -138,6 +134,9 @@ if __name__ == '__main__':
         y_predict_20 = []  # 20组 y_predict shape[0]应该30
         eoop_20 = []
         eood_20 = []
+        di_20 = []
+        spd_20 = []
+        print("id in id-list is %d " % id_list_cnt)
         for i in range(20):
             print('starting round %d' % i)
             accuracy = 0.
@@ -152,11 +151,11 @@ if __name__ == '__main__':
             y_true = []
             for idx in test_instances_array[i]:
                 test_res_tmp = []
-                sample_tmp = np.load('./data/data-x.npy')[idx]
+                sample_tmp = x_origin[idx]
                 label_tmp = model_argmax(sess, x, preds, np.array([sample_tmp]))
                 X_sample.append(sample_tmp)  # 保存当前的instance
                 y_pre.append(label_tmp)  # 保存当前推理获得的y值 0 :<50k 1: >50k
-                ground_truth_tmp_array = np.load('./data/data-y.npy')[idx]
+                ground_truth_tmp_array = y_origin[idx]
                 if ground_truth_tmp_array[0] > 0:
                     ground_truth_tmp = 0
                 else:
@@ -174,13 +173,19 @@ if __name__ == '__main__':
             X_arr = np.array(X_sample, dtype=np.float32)
             y_arr = np.array(y_pre, dtype=np.float32)
             y_true_arr = np.array(y_true, dtype=np.float32)
-            # eoop = statistical_parity_difference.S_P_D(X_arr, y_arr)
-            # di = disparte_impact.D_I(X_arr, y_arr)
-            eoop = equality_of_oppo.E_Oppo(X_arr, y_true_arr, y_arr)
-            eood = equality_of_oppo.E_Odds(X_arr, y_true_arr, y_arr)
+
+            spd = statistical_parity_difference.S_P_D_adult_age(X_arr, y_arr)
+            di = disparte_impact.D_I_adult_age(X_arr, y_arr)
+            eoop = equality_of_oppo.E_Oppo_adult_age(X_arr, y_true_arr, y_arr)
+            eood = equality_of_oppo.E_Odds_adult_age(X_arr, y_true_arr, y_arr)
+
+            print("metrics: %f %f %f %f " % (spd, di, eoop, eood))
             y_predict_20.append(y_pre)
             eoop_20.append(eoop)
             eood_20.append(eood)
+            di_20.append(di)
+            spd_20.append(spd)
+
             test_res_right_or_wrong_set.append(test_res_tmp)
             accuracy = cor_cnt / (cor_cnt + wro_cnt)
             test_accu.append(accuracy)
@@ -190,10 +195,13 @@ if __name__ == '__main__':
         # predict_res_array = np.array(y_predict_20, dtype=np.float32)
         eoop_res_array = np.array(eoop_20, dtype=np.float32)
         eood_res_array = np.array(eood_20, dtype=np.float32)
-
+        di_res_array = np.array(di_20, dtype=np.float32)
+        spd_res_array = np.array(spd_20, dtype=np.float32)
         # np.save('./test_accuracy' + id_list[id_list_cnt] + '.npy', accuracy_array)
         # np.save('./adult-testres/y_predict' + id_list[id_list_cnt] + '.npy', predict_res_array)
-        np.save('./adult-testres/eoop_res' + id_list[id_list_cnt] + '.npy', eoop_res_array)
-        np.save('./adult-testres/eood_res' + id_list[id_list_cnt] + '.npy', eood_res_array)
+        np.save('./adult-testres-age/eoop_res' + id_list[id_list_cnt] + '.npy', eoop_res_array)
+        np.save('./adult-testres-age/eood_res' + id_list[id_list_cnt] + '.npy', eood_res_array)
+        np.save('./adult-testres-age/di_res' + id_list[id_list_cnt] + '.npy', di_res_array)
+        np.save('./adult-testres-age/spd_res' + id_list[id_list_cnt] + '.npy', spd_res_array)
         id_list_cnt += 1
 
